@@ -1,0 +1,90 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Barbearia",
+        "description": "Documentacao dos endpoints da barbearia",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Servidor Local"
+        }
+    ],
+    "paths": {
+        "/clientes": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Listar todos os clientes",
+                "operationId": "7e6daa583638d8c1239ebb00020b6b0d",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Cadastrar novo cliente",
+                "operationId": "42d1ed0a3b662bee8adb649a163ac272",
+                "responses": {
+                    "201": {
+                        "description": "Criado com sucesso"
+                    }
+                }
+            }
+        },
+        "/show": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Listar um cliente",
+                "operationId": "c37ea8cff8870e4c7356cc93cb57e9a7",
+                "responses": {
+                    "200": {
+                        "description": "Cliente consultado com sucesso"
+                    }
+                }
+            }
+        },
+        "/update": {
+            "patch": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Atualizar um cliente",
+                "operationId": "06bf3c200fd07eb9bb38877603b4b1a2",
+                "responses": {
+                    "201": {
+                        "description": "Atualizado com sucesso"
+                    }
+                }
+            }
+        },
+        "/destroy": {
+            "delete": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Excluir um cliente",
+                "operationId": "ef1dbf578bdd2ab9a63073c842c991af",
+                "responses": {
+                    "201": {
+                        "description": "Excluído com sucesso"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Clientes",
+            "description": "Gerenciamento de Clientes da Barbearia"
+        }
+    ]
+}
