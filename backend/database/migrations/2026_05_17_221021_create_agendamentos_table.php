@@ -14,8 +14,7 @@ return new class extends Migration
     Schema::create('agendamentos', function (Blueprint $table) {
       $table->id();
       $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
-      $table->foreignId('barbeiro_id')->constrained('barbeiros');
-      $table->foreignId('servico_id')->constrained('servicos');
+      $table->foreignId('barbeiro_id')->constrained('barbeiros')->onDelete('cascade');
       $table->dateTime('data_hora');
       $table->string('status')->default('pendente');
       $table->timestamps();

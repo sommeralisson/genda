@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Barbeiro extends Model
-{
-  protected $fillable = ['nome'];
+class Barbeiro extends Model {
+  protected $fillable = ['nome', 'especialidade'];
+
+  public function agendamentos() {
+    return $this->hasMany(Agendamento::class);
+  }
 }

@@ -6,35 +6,44 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use App\Interfaces\ClienteControllerInterface;
 
-class ClienteController extends Controller implements ClienteControllerInterface
-{
-  public function index()
-  {
+class ClienteController extends Controller implements ClienteControllerInterface {
+  /**
+   * @inheritdoc
+   */
+  public function index() {
     return response()->json(Cliente::all());
   }
 
-  public function store(Request $request)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function store(Request $request) {
     $cliente = Cliente::create($request->all());
     return response()->json($cliente, 201);
   }
 
-  public function show($id)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function show($id) {
     $cliente = Cliente::find($id);
     return $cliente ? response()->json($cliente) : response()->json(['erro' => 'Cliente não encontrado'], 404);
   }
 
-  public function update(Request $request, $id)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function update(Request $request, $id) {
     $cliente = Cliente::find($id);
     if (!$cliente) return response()->json(['erro' => 'Cliente não encontrado'], 404);
     $cliente->update($request->all());
-    return response()->json($cliente);
+    return response()->json(  $cliente);
   }
 
-  public function destroy($id)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function destroy($id) {
     $cliente = Cliente::find($id);
 
     if (!$cliente) {

@@ -4,37 +4,64 @@ namespace App\Http\Controllers;
 
 use App\Models\Servico;
 use Illuminate\Http\Request;
+use App\Interfaces\ServicoControllerInterface;
 
-class ServicoController extends Controller
-{
-  public function index()
-  {
+class ServicoController extends Controller implements ServicoControllerInterface {
+  /**
+   * @inheritdoc
+   */
+  public function index() {
     return response()->json(Servico::all());
   }
 
-  public function store(Request $request)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function store(Request $request) {
     $servico = Servico::create($request->all());
     return response()->json($servico, 201);
   }
 
-  public function show($id)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function show($id) {
     $servico = Servico::find($id);
     return $servico ? response()->json($servico) : response()->json(['erro' => 'Serviço não encontrado'], 404);
   }
 
-  public function update(Request $request, $id)
-  {
+  /**
+   * @inheritdoc
+   */
+  public function update(Request $request, $id) {
     $servico = Servico::find($id);
-    if (!$servico) return response()->json(['erro' => 'Serviço não encontrado'], 404);
+
+    if (!$servico) {
+      return response()->json(['erro' => 'Serviço não encontrado'], 404);
+    }
+
     $servico->update($request->all());
     return response()->json($servico);
   }
 
-  public function destroy($id)
-  {
-    Servico::destroy($id);
-    return response()->json(null, 204);
+  /**
+   * @inheritdoc
+   */
+  public function destroy($id) {
+    $servico = Servico::find($id);
+
+    if (!$servico) {
+      return response()->json([
+        'message' => 'Serviço não encontrado'
+      ], 404);
+    }
+
+    $codigoExcluido = $servico->id;
+    $servico->delete();
+
+    return response()->json([
+      'message' => 'Serviço removido com sucesso',
+      'id_excluido' => $codigoExcluido
+    ], 200);
   }
 }

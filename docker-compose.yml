@@ -30,6 +30,7 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSOWORD}
+      TZ: 'America/Sao_Paulo'
     ports:
       - "3306:3306"
     networks:

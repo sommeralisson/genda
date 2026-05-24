@@ -2,26 +2,395 @@
     "openapi": "3.0.0",
     "info": {
         "title": "API Barbearia",
-        "description": "Documentacao dos endpoints da barbearia",
+        "description": "Documentação dos endpoints da barbearia desenvolvida em Laravel 11",
         "version": "1.0.0"
     },
     "servers": [
         {
             "url": "http://localhost:8000/api",
-            "description": "Servidor Local"
+            "description": "Servidor Local (Docker)"
         }
     ],
     "paths": {
+        "/agendamentos": {
+            "get": {
+                "tags": [
+                    "Agendamentos"
+                ],
+                "summary": "Listar toda a agenda da barbearia",
+                "description": "Método responsável por listar toda a agenda de marcações da barbearia.",
+                "operationId": "b235ba5d3e2d441a4ce2bc40a3856f8e",
+                "responses": {
+                    "200": {
+                        "description": "Lista de agendamentos retornada com sucesso"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Agendamentos"
+                ],
+                "summary": "Criar um novo agendamento de horário",
+                "description": "Método responsável por criar e reservar um novo agendamento de horário no sistema.",
+                "operationId": "e3cb79c2253a67c2db2049f1813f0449",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "cliente_id",
+                                    "barbeiro_id",
+                                    "servico_id",
+                                    "data_hora"
+                                ],
+                                "properties": {
+                                    "cliente_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "barbeiro_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "servicos": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            3
+                                        ]
+                                    },
+                                    "data_hora": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-15 14:30:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Agendamento realizado com sucesso"
+                    }
+                }
+            }
+        },
+        "/agendamentos/{id}": {
+            "get": {
+                "tags": [
+                    "Agendamentos"
+                ],
+                "summary": "Consultar detalhes de um agendamento específico",
+                "description": "Método responsável por consultar e exibir os detalhes específicos de um agendamento por meio de seu ID.",
+                "operationId": "a531a083dec8a73c006b9316d54e5488",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do agendamento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados do agendamento retornados"
+                    },
+                    "404": {
+                        "description": "Agendamento não encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Agendamentos"
+                ],
+                "summary": "Cancelar um agendamento",
+                "description": "Método responsável por cancelar e remover permanentemente um horário agendado do sistema.",
+                "operationId": "8a5b43b9c636fe4e496876453317d09a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do agendamento a ser cancelado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Agendamento cancelado com sucesso"
+                    },
+                    "404": {
+                        "description": "Agendamento não encontrado"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Agendamentos"
+                ],
+                "summary": "Remarcar data ou alterar dados do agendamento",
+                "description": "Método responsável por remarcar a data/hora ou alterar o profissional associado a um agendamento existente.",
+                "operationId": "a054c0963e464fff5cf489a609b65bd6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do agendamento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "data_hora": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-15 16:00:00"
+                                    },
+                                    "barbeiro_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Horário reagendado com sucesso"
+                    },
+                    "404": {
+                        "description": "Agendamento não encontrado"
+                    }
+                }
+            }
+        },
+        "/agendamentos/disponibilidade": {
+            "get": {
+                "tags": [
+                    "Agendamentos"
+                ],
+                "summary": "Consultar horários disponíveis de um barbeiro",
+                "description": "Método responsável por calcular e retornar os horários disponíveis de um barbeiro em uma data específica.",
+                "operationId": "09dd3e08ab7a70ee14d78436c315b6e8",
+                "parameters": [
+                    {
+                        "name": "barbeiro_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "in": "query",
+                        "description": "Formato YYYY-MM-DD",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "servicos[]",
+                        "in": "query",
+                        "description": "Array de IDs dos serviços ex: servicos[]=1&servicos[]=2",
+                        "required": true,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de horários livres retornada"
+                    }
+                }
+            }
+        },
+        "/barbeiros": {
+            "get": {
+                "tags": [
+                    "Barbeiros"
+                ],
+                "summary": "Listar todos os barbeiros",
+                "description": "Método responsável por listar todos os barbeiros cadastrados no estabelecimento.",
+                "operationId": "ac18858114beec5e4e22c14826d5b86d",
+                "responses": {
+                    "200": {
+                        "description": "Lista de barbeiros retornada com sucesso"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Barbeiros"
+                ],
+                "summary": "Cadastrar novo barbeiro",
+                "description": "Método responsável por cadastrar e persistir um novo barbeiro/profissional no sistema.",
+                "operationId": "d795f590f55526dd97525966db333f33",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome",
+                                    "especialidade"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Navalha de Ouro"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Barbeiro cadastrado com sucesso"
+                    }
+                }
+            }
+        },
+        "/barbeiros/{id}": {
+            "get": {
+                "tags": [
+                    "Barbeiros"
+                ],
+                "summary": "Obter dados de um barbeiro específico",
+                "description": "Método responsável por buscar e exibir os dados de um barbeiro específico por meio de seu ID.",
+                "operationId": "0444948625b5b1ee2741751418b78a03",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do barbeiro",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados do barbeiro retornados com sucesso"
+                    },
+                    "404": {
+                        "description": "Barbeiro não encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Barbeiros"
+                ],
+                "summary": "Excluir um barbeiro",
+                "description": "Método responsável por remover permanentemente um barbeiro do banco de dados do sistema.",
+                "operationId": "ab3355f891e150faaf288243c6223626",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do barbeiro a ser excluído",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Barbeiro removido com sucesso"
+                    },
+                    "404": {
+                        "description": "Barbeiro não encontrado"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Barbeiros"
+                ],
+                "summary": "Atualizar dados de um barbeiro",
+                "description": "Método responsável por atualizar a especialidade ou outros dados cadastrais de um barbeiro existente.",
+                "operationId": "10f7a1f8b2286be3931cf9af1055bc85",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do barbeiro",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "especialidade": {
+                                        "type": "string",
+                                        "example": "Especialista em Degradê e Progressiva"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Barbeiro atualizado com sucesso"
+                    },
+                    "404": {
+                        "description": "Barbeiro não encontrado"
+                    }
+                }
+            }
+        },
         "/clientes": {
             "get": {
                 "tags": [
                     "Clientes"
                 ],
                 "summary": "Listar todos os clientes",
+                "description": "Método responsável por listar todos os clientes cadastrados na base de dados.",
                 "operationId": "7e6daa583638d8c1239ebb00020b6b0d",
                 "responses": {
                     "200": {
-                        "description": "Sucesso"
+                        "description": "Lista de clientes retornada com sucesso"
                     }
                 }
             },
@@ -30,52 +399,301 @@
                     "Clientes"
                 ],
                 "summary": "Cadastrar novo cliente",
+                "description": "Método responsável por criar e persistir um novo cliente no sistema.",
                 "operationId": "42d1ed0a3b662bee8adb649a163ac272",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome",
+                                    "telefone",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Alisson Sommer"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "47999998888"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "alisson@email.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
-                        "description": "Criado com sucesso"
+                        "description": "Cliente cadastrado com sucesso"
                     }
                 }
             }
         },
-        "/show": {
+        "/clientes/{id}": {
             "get": {
                 "tags": [
                     "Clientes"
                 ],
-                "summary": "Listar um cliente",
-                "operationId": "c37ea8cff8870e4c7356cc93cb57e9a7",
+                "summary": "Obter dados de um cliente específico",
+                "description": "Método responsável por buscar e exibir os detalhes de um cliente específico através do seu código identificador.",
+                "operationId": "37e8a9756593ca4a25faafb81dba175c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Cliente consultado com sucesso"
+                        "description": "Dados do cliente retornados com sucesso"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
                     }
                 }
-            }
-        },
-        "/update": {
-            "patch": {
-                "tags": [
-                    "Clientes"
-                ],
-                "summary": "Atualizar um cliente",
-                "operationId": "06bf3c200fd07eb9bb38877603b4b1a2",
-                "responses": {
-                    "201": {
-                        "description": "Atualizado com sucesso"
-                    }
-                }
-            }
-        },
-        "/destroy": {
+            },
             "delete": {
                 "tags": [
                     "Clientes"
                 ],
-                "summary": "Excluir um cliente",
-                "operationId": "ef1dbf578bdd2ab9a63073c842c991af",
+                "summary": "Excluir um cliente do sistema",
+                "description": "Método responsável por remover definitivamente um cliente do banco de dados e retornar a confirmação do código excluído.",
+                "operationId": "04f02157546cfad8ff244a1be6768d8f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do cliente a ser excluído",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente excluído com sucesso e ID retornado"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Atualizar dados de um cliente",
+                "description": "Método responsável por atualizar de forma parcial ou total os dados cadastrais de um cliente existente.",
+                "operationId": "8364a21e48efa5a85222dac16006ced8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Alisson S. Mudado"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "47988887777"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente atualizado com sucesso"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    }
+                }
+            }
+        },
+        "/servicos": {
+            "get": {
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Listar catálogo de serviços",
+                "description": "Método responsável por listar todo o catálogo de serviços cadastrados na barbearia.",
+                "operationId": "32212bcd3c456626b182f8e506a638c4",
+                "responses": {
+                    "200": {
+                        "description": "Lista de serviços retornada com sucesso"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Adicionar novo serviço ao catálogo",
+                "description": "Método responsável por adicionar e persistir um novo serviço ao catálogo da barbearia.",
+                "operationId": "296661a8b644322875d7953720b18e8b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome",
+                                    "preco",
+                                    "duracao_minutos"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Corte Social + Barba completíssimo"
+                                    },
+                                    "preco": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 65.5
+                                    },
+                                    "duracao_minutos": {
+                                        "type": "integer",
+                                        "example": 45
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
-                        "description": "Excluído com sucesso"
+                        "description": "Serviço adicionado com sucesso"
+                    }
+                }
+            }
+        },
+        "/servicos/{id}": {
+            "get": {
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Obter detalhes de um serviço específico",
+                "description": "Método responsável por obter e exibir os detalhes de um serviço específico através do seu código identificador.",
+                "operationId": "6baef081008af6eb65307d18605b2488",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do serviço",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do serviço retornados"
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Remover um serviço do catálogo",
+                "description": "Método responsável por remover definitivamente um serviço do catálogo do sistema.",
+                "operationId": "0b68ece74c8bf256e0e7dad496ef0a0a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do serviço a ser removido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Serviço removido com sucesso"
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Atualizar preço ou dados do serviço",
+                "description": "Método responsável por atualizar o preço ou outros dados cadastrais de um serviço existente no catálogo.",
+                "operationId": "47cc77572cfbd122f2210a4698618e5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID numérico do serviço",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "preco": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 70
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Serviço updated com sucesso"
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado"
                     }
                 }
             }
@@ -83,8 +701,20 @@
     },
     "tags": [
         {
+            "name": "Agendamentos",
+            "description": "Gerenciamento da agenda de horários"
+        },
+        {
+            "name": "Barbeiros",
+            "description": "Gerenciamento de profissionais/barbeiros"
+        },
+        {
             "name": "Clientes",
-            "description": "Gerenciamento de Clientes da Barbearia"
+            "description": "Gerenciamento de clientes da barbearia"
+        },
+        {
+            "name": "Serviços",
+            "description": "Gerenciamento do catálogo de serviços e preços"
         }
     ]
 }
