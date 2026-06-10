@@ -11,7 +11,7 @@ class AgendamentoController extends Controller implements AgendamentoControllerI
    * @inheritdoc
    */
   public function index() {
-    return response()->json(Agendamento::all());
+    return response()->json(Agendamento::with('servicos')->get());
   }
 
   /**
