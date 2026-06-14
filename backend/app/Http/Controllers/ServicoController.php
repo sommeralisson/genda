@@ -50,6 +50,13 @@ class ServicoController extends Controller implements ServicoControllerInterface
   public function destroy($id) {
     $servico = Servico::find($id);
 
+    if ($servico->agendamentos()->exists()) {
+      return response()->json([
+        'erro' => 'Vínculo encontrado',
+        'message' => 'Não é possível excluir este serviço porque ele está incluso em agendamentos existentes.'
+      ], 422);
+    }
+
     if (!$servico) {
       return response()->json([
         'message' => 'Serviço não encontrado'

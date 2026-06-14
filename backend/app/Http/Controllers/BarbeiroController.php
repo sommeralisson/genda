@@ -47,7 +47,14 @@ class BarbeiroController extends Controller implements BarbeiroControllerInterfa
    * @inheritdoc
    */
   public function destroy($id) {
-    $barbeiro = Barbeiro::find($id);
+    $barbeiro = Barbeiro::findOrFail($id);
+
+    if ($barbeiro->agendamentos()->exists()) {
+      return response()->json([
+        'erro' => 'Vínculo encontrado',
+        'message' => 'Não é possível excluir este barbeiro porque ele possui agendamentos marcados.'
+      ], 422);
+    }
 
     if (!$barbeiro) {
       return response()->json([

@@ -13,6 +13,8 @@ export default function ServicoView() {
   const [servicos, setServicos] = useState([]);
   const [idEdicao, setIdEdicao] = useState(null);
   const [form, setForm] = useState({ nome: '', preco: '', duracao_minutos: '' });
+  const [mensagem, setMensagem] = useState('');
+  const [statusErro, setStatusErro] = useState(false);
 
   const listar = async () => {
     const res = await axios.get(API);
@@ -43,9 +45,26 @@ export default function ServicoView() {
   };
 
   const excluir = async (id) => {
-    if (window.confirm('Remover serviço?')) {
+    if (!confirm('Deseja realmente remover este serviço da barbearia?')) return;
+
+    try {
+      setMensagem('');
+      setStatusErro(false);
+
       await axios.delete(`${API}/${id}`);
+
+      setStatusErro(false);
+      setMensagem('Serviço excluído com sucesso!');
       listar();
+
+      setTimeout(() => setMensagem(''), 4000);
+    } catch (error) {
+      setStatusErro(true);
+
+      const msg = error.response?.data?.message || 'Erro ao tentar remover o serviço.';
+      setMensagem(msg);
+
+      setTimeout(() => setMensagem(''), 6000);
     }
   };
 
@@ -55,6 +74,14 @@ export default function ServicoView() {
         <h2 className="text-lg font-bold text-slate-900">{idEdicao ? 'Alterar Serviço' : 'Adicionar Novo Serviço'}</h2>
         <p className="text-sm text-slate-500">Configure os preços e o tempo estimado de cada procedimento do catálogo.</p>
       </div>
+
+      {mensagem && (
+        <div className={`p-4 rounded-xl border text-sm font-medium transition-all duration-300 ${
+          statusErro ? 'bg-red-50 text-red-700 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+        }`}>
+          {mensagem}
+        </div>
+      )}
 
       <form onSubmit={salvar} className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100 items-end">
         <div>

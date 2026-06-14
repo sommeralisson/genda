@@ -14,7 +14,7 @@ return new class extends Migration
       Schema::create('agendamento_servico', function (Blueprint $table) {
         $table->id();
         $table->foreignId('agendamento_id')->constrained('agendamentos')->onDelete('cascade');
-        $table->foreignId('servico_id')->constrained('servicos')->onDelete('cascade');
+        $table->foreignId('servico_id')->constrained('servicos')->onDelete('restrict');
         $table->timestamps();
       });
     }

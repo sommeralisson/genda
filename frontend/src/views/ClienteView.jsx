@@ -13,6 +13,8 @@ export default function ClienteView() {
   const [clientes, setClientes] = useState([]);
   const [idEdicao, setIdEdicao] = useState(null);
   const [form, setForm] = useState({ nome: '', telefone: '' });
+  const [mensagem, setMensagem] = useState('');
+  const [statusErro, setStatusErro] = useState(false);
 
   const listar = async () => {
     const res = await axios.get(API);
@@ -43,9 +45,26 @@ export default function ClienteView() {
   };
 
   const excluir = async (id) => {
-    if (window.confirm('Excluir cliente?')) {
+    if (!confirm('Deseja realmente excluir este cliente?')) return;
+
+    try {
+      setMensagem('');
+      setStatusErro(false);
+
       await axios.delete(`${API}/${id}`);
+
+      setStatusErro(false);
+      setMensagem('Cliente removido com sucesso!');
       listar();
+
+      setTimeout(() => setMensagem(''), 4000);
+    } catch (error) {
+      setStatusErro(true);
+
+      const msg = error.response?.data?.message || 'Erro ao tentar remover o cliente.';
+      setMensagem(msg);
+
+      setTimeout(() => setMensagem(''), 6000);
     }
   };
 
@@ -55,6 +74,14 @@ export default function ClienteView() {
         <h2 className="text-lg font-bold text-slate-900">{idEdicao ? 'Alterar Cliente' : 'Cadastrar Novo Cliente'}</h2>
         <p className="text-sm text-slate-500">Adicione ou modifique os dados dos clientes da barbearia.</p>
       </div>
+
+      {mensagem && (
+        <div className={`p-4 rounded-xl border text-sm font-medium transition-all duration-300 ${
+          statusErro ? 'bg-red-50 text-red-700 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+        }`}>
+          {mensagem}
+        </div>
+      )}
 
       <form onSubmit={salvar} className="flex flex-col md:flex-row gap-3 items-end bg-slate-50 p-4 rounded-xl border border-slate-100">
         <div className="w-full md:w-1/3">

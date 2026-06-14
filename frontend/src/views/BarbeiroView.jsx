@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const API = 'http://localhost:8000/api/barbeiros';
 
-// Classes utilitárias do Tailwind v4 padronizadas
 const styles = {
   input: "w-full bg-white border border-slate-200 rounded-lg p-2 text-sm h-10 focus:outline-none focus:border-slate-900 transition-colors placeholder:text-slate-400",
   btnPrimary: "bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors whitespace-nowrap h-10 flex items-center justify-center",
@@ -14,6 +13,8 @@ export default function BarbeiroView() {
   const [barbeiros, setBarbeiros] = useState([]);
   const [idEdicao, setIdEdicao] = useState(null);
   const [nome, setNome] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [statusErro, setStatusErro] = useState(false);
 
   const listar = async () => {
     const res = await axios.get(API);
@@ -44,9 +45,30 @@ export default function BarbeiroView() {
   };
 
   const excluir = async (id) => {
-    if (window.confirm('Remover profissional?')) {
+    if (!confirm("Tem certeza que deseja remover este profissional?")) {
+      return;
+    }
+
+    try {
+      setMensagem('');
+      setStatusErro(false);
+
       await axios.delete(`${API}/${id}`);
+
+      setStatusErro(false);
+      setMensagem("Profissional removido com sucesso!");
       listar();
+
+      setTimeout(() => setMensagem(''), 4000);
+    } catch (error) {
+      console.log(error);
+      setStatusErro(true);
+
+      const mensagemErro = error.response?.data?.message || "Ocorreu um erro ao tentar excluir.";
+
+      setMensagem(mensagemErro);
+
+      setTimeout(() => setMensagem(''), 6000);
     }
   };
 
@@ -56,6 +78,16 @@ export default function BarbeiroView() {
         <h2 className="text-lg font-bold text-slate-900">{idEdicao ? 'Alterar Barbeiro' : 'Cadastrar Novo Barbeiro'}</h2>
         <p className="text-sm text-slate-500">Gerencie a equipe de profissionais ativos na casa.</p>
       </div>
+
+      {mensagem && (
+        <div className={`p-4 rounded-xl border text-sm font-medium transition-all duration-300 ${
+          statusErro
+            ? 'bg-red-50 text-red-700 border-red-200'
+            : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+        }`}>
+          {mensagem}
+        </div>
+      )}
 
       <form onSubmit={salvar} className="flex flex-col md:flex-row gap-3 items-end bg-slate-50 p-4 rounded-xl border border-slate-100">
         <div className="w-full md:max-w-md">
@@ -71,7 +103,7 @@ export default function BarbeiroView() {
       <div className="overflow-x-auto rounded-xl border border-slate-100 shadow-sm bg-white">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               <th className="p-4 w-16">ID</th>
               <th className="p-4">Nome Profissional</th>
               <th className="p-4 text-right">Ações</th>

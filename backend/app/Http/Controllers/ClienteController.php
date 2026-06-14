@@ -44,7 +44,14 @@ class ClienteController extends Controller implements ClienteControllerInterface
    * @inheritdoc
    */
   public function destroy($id) {
-    $cliente = Cliente::find($id);
+    $cliente = Cliente::findOrFail($id);
+
+    if ($cliente->agendamentos()->exists()) {
+      return response()->json([
+        'erro' => 'Vínculo encontrado',
+        'message' => 'Não é possível excluir este cliente porque ele possui históricos ou agendamentos ativos.'
+      ], 422);
+    }
 
     if (!$cliente) {
       return response()->json([
