@@ -5,14 +5,14 @@ Sistema completo para gerenciamento de barbearias, permitindo o controle de clie
 ## 🏗️ Arquitetura do Projeto
 
 O projeto é dividido em duas partes independentes que se comunicam via API REST:
-- **Backend:** Laravel 11 / PHP 8.3 rodando em ambiente isolado via Docker.
-- **Frontend:** Vue 3 (Vite) + Tailwind CSS v4 rodando nativamente no ambiente Linux (WSL).
+- **Backend:** Laravel 11.
+- **Frontend:** React js + Tailwind CSS v4 rodando no ambiente Linux (WSL).
 
 ---
 
 ## 🚀 Como Rodar o Projeto em uma Nova Máquina
 
-Siga os passos abaixo rigorosamente para garantir que os ambientes subam sem conflitos de permissão ou caminhos.
+Siga os passos abaixo para garantir que os ambientes subam sem conflitos de permissão ou caminhos.
 
 ### 📋 Pré-requisitos
 Antes de começar, certifique-se de ter instalado na máquina hospedeira:
